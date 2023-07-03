@@ -12,23 +12,23 @@ void imprime_produto(TProd *prod) {
   printf("\nNome: ");
   printf("%s", prod->nome);
   printf("\nValor: R$");
-  printf("%.2f", prod->valor);
+  printf("%s", prod->valor);
   printf("\n**********************************************");
 }
-TProd *produto(int cod, char *nome, double valor) {
+TProd *produto(int cod, char *nome, char *valor) {
   TProd *prod = (TProd *)malloc(sizeof(TProd));
   if (prod)
     memset(prod, 0, sizeof(TProd));
   prod->cod = cod;
   strcpy(prod->nome, nome);
-  prod->valor = valor;
+  strcpy(prod->valor, valor);
   return prod;
 }
 
 void salva_produto(TProd *prod, FILE *out) {
   fwrite(&prod->cod, sizeof(int), 1, out);
   fwrite(prod->nome, sizeof(char), sizeof(prod->nome), out);
-  fwrite(&prod->valor, sizeof(double), 1, out);
+  fwrite(prod->valor, sizeof(char), sizeof(prod->valor), out);
 }
 
 TProd *le_produto(FILE *in) {
@@ -38,7 +38,7 @@ TProd *le_produto(FILE *in) {
     return NULL;
   }
   fread(prod->nome, sizeof(char), sizeof(prod->nome), in);
-  fread(&prod->valor, sizeof(double), 1, in);
+  fread(prod->valor, sizeof(char), sizeof(prod->valor), in);
   return prod;
 }
 
@@ -53,9 +53,9 @@ void le_produtos(FILE *in) {
 }
 
 int tamanho_produto() {
-  return sizeof(int)         // cod
-         + sizeof(char) * 50 // nome
-         + sizeof(double);   // valor
+  return sizeof(int)           // cod
+         + (sizeof(char) * 50) // nome
+         + sizeof(char) * 50;     // valor
 }
 
 int tamanho_arquivo_produto(FILE *arq) {
@@ -78,7 +78,7 @@ void initializeBaseDesorder_produto(FILE *file, int numberRecords) {
     TProd prod;
     prod.cod = f[i];
     sprintf(prod.nome, "Produto %d", f[i]);
-    prod.valor = 2.5 * (i + 1);
+    sprintf(prod.valor, "%.2f", (2.5 * (i + 1)));
     fseek(file, (i)*tamanho_registro_produto(), SEEK_SET);
     salva_produto(&prod, file);
   }
@@ -160,3 +160,4 @@ void insertion_sort_disco_produto(FILE *arq, int tam) {
   }
   fflush(arq);
 }
+
