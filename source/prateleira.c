@@ -33,7 +33,9 @@ void salva_prateleira(TPrat *prat, FILE *out) {
   fwrite(&prat->quantAtual, sizeof(int), 1, out);
   fwrite(&prat->quantMax, sizeof(int), 1, out);
   fwrite(&prat->p.cod, sizeof(int), 1, out);
-  salva_produto(&prat->p, out);
+  fwrite(prat->p.nome, sizeof(char), sizeof(prat->p.nome), out);
+  fwrite(prat->p.valor, sizeof(char), sizeof(prat->p.valor), out);
+  //salva_produto(&prat->p, out);
 }
 
 TPrat *le_prateleira(FILE *in) {
@@ -86,7 +88,7 @@ void initializeBaseDesorder_prateleira(FILE *file, int numberRecords) {
     prat.cod = f[i];
     prat.quantAtual = 25;
     prat.quantMax = 50;
-    prod = produto(66, "Produto 66", 12.50);
+    prod = produto(66, "Produto 66", "12.50");
     prat.p = *prod;
     fseek(file, (i)*tamanho_registro_prateleira(), SEEK_SET);
     salva_prateleira(&prat, file);
