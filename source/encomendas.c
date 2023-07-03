@@ -25,11 +25,11 @@ void imprime_encomenda(TEncomenda *encomenda) {
   printf("%s\n", encomenda->data);
 
   printf("QUANTIDADE PRE-DEFINIDA: ");
-  printf("%d\n", encomenda->quantidade);
+  printf("%s\n", encomenda->quantidade);
 }
 
 TEncomenda *encomenda(int id, char *tipo, char *cnpj, char *cpf, char *data,
-                      int qtde) {
+                      char* qtde) {
   TEncomenda *encomenda = (TEncomenda *)malloc(sizeof(TEncomenda));
 
   if (encomenda)
@@ -40,7 +40,7 @@ TEncomenda *encomenda(int id, char *tipo, char *cnpj, char *cpf, char *data,
   strcpy(encomenda->cpf, cpf);
   strcpy(encomenda->cnpj, cnpj);
   strcpy(encomenda->data, data);
-  encomenda->quantidade = qtde;
+  strcpy(encomenda->quantidade, qtde);
 
   return encomenda;
 }
@@ -51,7 +51,7 @@ void salva_encomenda(TEncomenda *encomenda, FILE *file) {
   fwrite(encomenda->cpf, sizeof(char), sizeof(encomenda->cpf), file);
   fwrite(encomenda->cnpj, sizeof(char), sizeof(encomenda->cnpj), file);
   fwrite(encomenda->data, sizeof(char), sizeof(encomenda->data), file);
-  fwrite(&encomenda->quantidade, sizeof(int), 1, file);
+  fwrite(encomenda->quantidade, sizeof(char), sizeof(encomenda->quantidade), file);
 }
 
 TEncomenda *le_encomenda(FILE *file) {
@@ -65,7 +65,7 @@ TEncomenda *le_encomenda(FILE *file) {
   fread(encomenda->cpf, sizeof(char), sizeof(encomenda->cpf), file);
   fread(encomenda->cnpj, sizeof(char), sizeof(encomenda->cnpj), file);
   fread(encomenda->data, sizeof(char), sizeof(encomenda->data), file);
-  fread(&encomenda->quantidade, sizeof(int), 1, file);
+  fread(encomenda->quantidade, sizeof(char), sizeof(encomenda->quantidade), file);
   return encomenda;
 }
 
@@ -85,7 +85,7 @@ int tamanho_encomenda() {
          + sizeof(char) * 15  // cpf
          + sizeof(char) * 19  // cnpj
          + sizeof(char) * 11; // data
-  +sizeof(int);               // qtde
+         + sizeof(char) * 50; // qtde
 }
 
 int tamanho_arquivo_encomenda(FILE *arq) {
@@ -112,7 +112,7 @@ void initializeBaseDesorder_encomenda(FILE *file, int numberRecords) {
     sprintf(encomenda.cpf, "111.111.111-11");
     sprintf(encomenda.cnpj, "11.111.111/0001-11");
     sprintf(encomenda.data, "01/01/2000");
-    encomenda.quantidade = (i + 1) * 2;
+    sprintf(encomenda.quantidade, "%d",(i + 1) * 2);
     fflush(file);
     fseek(file, (i)*tamanho_registro_encomenda(), SEEK_SET);
     salva_encomenda(&encomenda, file);
@@ -192,3 +192,4 @@ void insertion_sort_disco_encomenda(FILE *arq, int tam) {
   }
   fflush(arq);
 }
+
